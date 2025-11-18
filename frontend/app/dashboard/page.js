@@ -1,15 +1,17 @@
 "use client"
+import FetchError from "@/components/FetchError";
 import Loader from "@/components/Loader";
 import RecentActivity from "@/components/RecentActivity";
 import { useGetStudentQuery } from "@/redux/features/studentApi";
+import { useGetteachersQuery } from "@/redux/features/teacherApi";
 import { Users, GraduationCap, ChartSpline, Activity } from "lucide-react";
 
 
 export default function DashboardHome() {
-    const { data: students, isLoading, isError } = useGetStudentQuery()
+    const { data: students, isLoading, isError, refetch } = useGetStudentQuery();
 
     if (isLoading) return <Loader />
-    if (isError) return <p className="text-center mt-10 text-red-600">Error loading students!</p>;
+    if (isError) return <FetchError refetch={refetch} message="⚠️ Error loading data!" />;
     return (
         <div className=" w-full mt-0">
             {/* Welcome Section */}
@@ -29,7 +31,7 @@ export default function DashboardHome() {
                 <div className="bg-white shadow-md rounded-lg p-5 flex flex-col items-center hover:shadow-xl transition-shadow">
                     <Users className="w-10 h-10 p-1 rounded-xl text-green-500 mb-2 bg-green-100" />
                     <span className="text-gray-400 text-sm">Total Students</span>
-                    <span className="text-2xl font-bold text-gray-800 mt-2">{students.length}</span>
+                    <span className="text-2xl font-bold text-gray-800 mt-2">{students?.length}</span>
                 </div>
 
                 {/* Total Teachers */}

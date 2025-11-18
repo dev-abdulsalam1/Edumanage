@@ -2,16 +2,12 @@
 
 import React, { useState } from "react";
 import { Search, Eye, Edit, Trash2, Filter } from "lucide-react";
+import { useGetteachersQuery } from "@/redux/features/teacherApi";
+import Loader from "@/components/Loader";
 
 export default function StudentsPage() {
     const [searchQuery, setSearchQuery] = useState("");
-
-    const teachers = [
-        { id: "TEA1001", name: "Abdi Ahmed", subject: "Mathematics", experience: "5 yrs", status: "Active", contact: "123-456-789" },
-        { id: "TEA1002", name: "Fatima Noor", subject: "Physics", experience: "3 yrs", status: "Active", contact: "987-654-321" },
-        { id: "TEA1003", name: "Mohamed Hassan", subject: "English", experience: "7 yrs", status: "On Leave", contact: "555-123-456" },
-        { id: "TEA1004", name: "Amina Ali", subject: "Chemistry", experience: "10 yrs", status: "Retired", contact: "444-555-666" },
-    ];
+    const { data: teachers, isLoading, isError } = useGetteachersQuery()
 
     const statusStyles = {
         Active: "bg-green-100 text-green-700",
@@ -19,11 +15,8 @@ export default function StudentsPage() {
         Retired: "bg-gray-100 text-gray-600",
     };
 
-    const filteredTeachers = teachers.filter(
-        (teacher) =>
-            teacher.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            teacher.id.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    if (isLoading) return <Loader />;
+    if (isError) return <FetchError message="⚠️ Error loading teachers!" />;
 
     return (
         <div className="p-6 h-full">
@@ -66,23 +59,23 @@ export default function StudentsPage() {
                         <tr>
                             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Teacher Name</th>
                             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Teacher ID</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">subject</th>
                             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Contact</th>
                             <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {filteredTeachers.length > 0 ? (
-                            filteredTeachers.map((teacher) => (
+                        {teachers.length > 0 ? (
+                            teachers.map((teacher) => (
                                 <tr key={teacher.id} className="hover:bg-gray-50 transition">
-                                    <td className="px-6 py-3 font-medium">{teacher.name}</td>
-                                    <td className="px-6 py-3">{teacher.id}</td>
+                                    <td className="px-6 py-3 font-medium">{teacher.firstName} {teacher.lastName}</td>
+                                    <td className="px-6 py-3">{teacher.teacherID}</td>
                                     <td className="px-6 py-3">
                                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyles[teacher.status]}`}>
-                                            {teacher.status}
+                                            {teacher.subject}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-3">{teacher.contact}</td>
+                                    <td className="px-6 py-3">{teacher.experience} years</td>
                                     <td className="px-6 py-3 text-center flex justify-center gap-2">
                                         <button className="text-blue-600 hover:text-blue-800">
                                             <Eye className="w-4 h-4" />
