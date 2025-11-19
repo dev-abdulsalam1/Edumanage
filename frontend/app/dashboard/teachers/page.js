@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Edit, Trash2, Filter } from "lucide-react";
+import { Search, Edit, Trash2, Filter, Eye } from "lucide-react";
 import {
     useGetTeacherQuery,
     useDeleteTeacherMutation
@@ -12,6 +12,7 @@ import Loader from "@/components/Loader";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
 import { toast } from "sonner";
 import FetchError from "@/components/FetchError";
+import Link from "next/link";
 
 export default function TeachersPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -114,10 +115,17 @@ export default function TeachersPage() {
                                     key={teacher._id}
                                     className="hover:bg-gray-50 transition block sm:table-row p-4 sm:p-0"
                                 >
-                                    {/* Mobile Name */}
                                     <td className="px-6 py-3 font-medium block sm:table-cell">
                                         <span className="sm:hidden font-semibold text-gray-500">Name: </span>
-                                        {teacher.firstName} {teacher.lastName}
+                                        <div className="flex items-center gap-3">
+                                            {/* Avatar Circle */}
+                                            <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
+                                                {teacher.firstName[0]}
+                                                {teacher.lastName[0]}
+                                            </div>
+                                            {/* Full Name */}
+                                            <span>{teacher.firstName} {teacher.lastName}</span>
+                                        </div>
                                     </td>
 
                                     {/* Teacher ID */}
@@ -146,7 +154,14 @@ export default function TeachersPage() {
 
                                     {/* Actions */}
                                     <td className="px-6 py-3 space-x-3 text-center flex sm:block justify-center gap-3">
-
+                                        <button>
+                                            <Link
+                                                href={`/dashboard/teachers/${teacher._id}`}
+                                                className="text-blue-600 hover:text-blue-800"
+                                            >
+                                                <Eye className="w-4 h-4" />
+                                            </Link>
+                                        </button>
                                         {/* EDIT BUTTON */}
                                         <button
                                             onClick={() => {

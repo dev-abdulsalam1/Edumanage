@@ -9,6 +9,11 @@ export const teacherApi = createApi({
             query: () => "teachers",
             providesTags: ["Teachers"],
         }),
+        // GET single teacher
+        getSingleTeacher: builder.query({
+            query: (id) => `teachers/${id}`,
+            providesTags: (result, error, id) => [{ type: "Teachers", id }],
+        }),
 
         addTeacher: builder.mutation({
             query: (newteachers) => ({
@@ -40,6 +45,7 @@ export const teacherApi = createApi({
 
 export const {
     useGetTeacherQuery,
+    useGetSingleTeacherQuery,
     useAddTeacherMutation,
     useUpdateTeacherMutation,
     useDeleteTeacherMutation,
