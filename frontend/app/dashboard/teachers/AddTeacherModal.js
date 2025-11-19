@@ -2,171 +2,205 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { useAddStudentMutation, useUpdateStudentMutation } from "@/redux/features/studentApi";
 import { toast } from "sonner";
+import {
+    useAddTeacherMutation,
+    useDeleteTeacherMutation,
+} from "../../../redux/features/teacherApi";
 
-export default function AddStudentModal({ isOpen, onClose, student }) {
-
+export default function AddTeacherModal({ isOpen, onClose, teacher }) {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
         gender: "Male",
-        grade: "",
+        email: "",
         phone: "",
-        parentName: "",
-        parentContact: "",
+        subject: "",
+        qualification: "",
+        experience: 0,
+        isActive: true,
     });
 
-    const [createStudent, { isLoading }] = useAddStudentMutation();
-    const [updateStudent, { isLoading: isUpdating }] = useUpdateStudentMutation();
+    const [createTeacher, { isLoading }] = useAddTeacherMutation();
+    const [updateTeacher, { isLoading: isUpdating }] = useDeleteTeacherMutation();
 
     const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [name]: type === "checkbox" ? checked : value,
         });
     };
 
-    // Update form when "student" prop changes (for editing)
+    // Load teacher data when editing
     useEffect(() => {
-        if (student) {
+        if (teacher) {
             setFormData({
-                firstName: student.firstName || "",
-                lastName: student.lastName || "",
-                gender: student.gender || "Male",
-                grade: student.grade || "",
-                phone: student.phone || "",
-                parentName: student.parentName || "",
-                parentContact: student.parentContact || "",
+                firstName: teacher.firstName || "",
+                lastName: teacher.lastName || "",
+                gender: teacher.gender || "Male",
+                email: teacher.email || "",
+                phone: teacher.phone || "",
+                subject: teacher.subject || "",
+                qualification: teacher.qualification || "",
+                experience: teacher.experience || 0,
+                isActive: teacher.isActive ?? true,
             });
         } else {
-            // Reset form if no student (for creating new)
             setFormData({
                 firstName: "",
                 lastName: "",
                 gender: "Male",
-                grade: "",
+                email: "",
                 phone: "",
-                parentName: "",
-                parentContact: "",
+                subject: "",
+                qualification: "",
+                experience: 0,
+                isActive: true,
             });
         }
-    }, [student, isOpen]); // run when student changes or modal opens
+    }, [teacher, isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
-            if (student) {
-                // Update existing student
-                await updateStudent({
-                    id: student._id,
-                    ...formData   // 🔥 unwrap body
+            if (teacher) {
+                await updateTeacher({
+                    id: teacher._id,
+                    body: formData,
                 }).unwrap();
-                toast.success("Student updated", { description: "✅ Updated successfully!" });
+
+                toast.success("Teacher updated successfully");
             } else {
-                // Create new student
-                await createStudent(formData).unwrap();
-                toast.success("Student created", { description: "✅ Created successfully!" });
+                await createTeacher(formData).unwrap();
+                toast.success("Teacher created successfully");
             }
+
             onClose();
-        } catch (err) {
-            toast.error("Operation failed", { description: "❌ Something went wrong!" });
+        } catch (error) {
+            toast.error("Failed!", {
+                description: error?.data?.message || "Something went wrong",
+            });
         }
     };
 
     return (
-        <div>
-            {isOpen && (<div className="fixed inset-0 bg-transparent backdrop-blur-sm bg-opacity-10 flex justify-center items-center z-50">
-                <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] sm:w-[500px] relative">
-                    <button
-                        onClick={onClose}
-                        className="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
+        <>
+            {isOpen && (
+                <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-[90%] sm:w-[500px] relative">
 
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-                        Add New Student
-                    </h2>
+                        <button
+                            onClick={onClose}
+                            className="absolute top-3 right-3 text-gray-600 hover:text-gray-800"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
 
-                    <form onSubmit={handleSubmit} className="space-y-3">
-                        <div className="flex gap-2">
-                            <input
-                                name="firstName"
-                                placeholder="First Name"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                className="w-1/2 border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
-                                required
-                            />
-                            <input
-                                name="lastName"
-                                placeholder="Last Name"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                className="w-1/2 border p-2 rounded-md focus:ring-2 focus:ring-blue-400 outline-none"
-                                required
-                            />
+                        <h2 className="text-2xl font-bold mb-4 text-center">
+                            {teacher ? "Edit Teacher" : "Add New Teacher"}
+                        </h2>
 
-                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-3">
 
-                        <div className="flex gap-2">
+                            <div className="flex gap-2">
+                                <input
+                                    name="firstName"
+                                    placeholder="First Name"
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                    className="w-1/2 border p-2 rounded-md"
+                                    required
+                                />
+                                <input
+                                    name="lastName"
+                                    placeholder="Last Name"
+                                    value={formData.lastName}
+                                    onChange={handleChange}
+                                    className="w-1/2 border p-2 rounded-md"
+                                    required
+                                />
+                            </div>
+
                             <select
                                 name="gender"
                                 value={formData.gender}
                                 onChange={handleChange}
-                                className="w-1/2 border p-2 rounded-md"
+                                className="w-full border p-2 rounded-md"
                             >
                                 <option>Male</option>
                                 <option>Female</option>
                             </select>
-                        </div>
 
-                        <input
-                            name="grade"
-                            placeholder="Grade (e.g., Grade 9)"
-                            value={formData.grade}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded-md"
-                            required
-                        />
+                            <input
+                                name="email"
+                                placeholder="Email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="w-full border p-2 rounded-md"
+                                required
+                            />
 
-                        <input
-                            name="phone"
-                            placeholder="Phone Number"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded-md"
-                        />
+                            <input
+                                name="phone"
+                                placeholder="Phone Number"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                className="w-full border p-2 rounded-md"
+                                required
+                            />
 
-                        <input
-                            name="parentName"
-                            placeholder="Parent Name"
-                            value={formData.parentName}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded-md"
-                        />
+                            <input
+                                name="subject"
+                                placeholder="Subject Specialization"
+                                value={formData.subject}
+                                onChange={handleChange}
+                                className="w-full border p-2 rounded-md"
+                                required
+                            />
 
-                        <input
-                            name="parentContact"
-                            placeholder="Parent Contact"
-                            value={formData.parentContact}
-                            onChange={handleChange}
-                            className="w-full border p-2 rounded-md"
-                        />
+                            <input
+                                name="qualification"
+                                placeholder="Qualification (e.g., B.Ed, M.Ed)"
+                                value={formData.qualification}
+                                onChange={handleChange}
+                                className="w-full border p-2 rounded-md"
+                                required
+                            />
 
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition-all disabled:opacity-60"
-                        >
-                            {student
-                                ? (isUpdating ? "Updating..." : "Update Student")
-                                : (isLoading ? "Saving..." : "Create Student")}
-                        </button>
-                    </form>
+                            <input
+                                name="experience"
+                                type="number"
+                                placeholder="Experience (years)"
+                                value={formData.experience}
+                                onChange={handleChange}
+                                className="w-full border p-2 rounded-md"
+                            />
+
+                            <label className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="checkbox"
+                                    name="isActive"
+                                    checked={formData.isActive}
+                                    onChange={handleChange}
+                                />
+                                Active Teacher
+                            </label>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading || isUpdating}
+                                className="w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 disabled:opacity-60"
+                            >
+                                {teacher
+                                    ? isUpdating ? "Updating..." : "Update Teacher"
+                                    : isLoading ? "Saving..." : "Create Teacher"}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </div>)}
-        </div>
+            )}
+        </>
     );
 }

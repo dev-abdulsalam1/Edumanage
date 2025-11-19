@@ -1,97 +1,177 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Eye, Edit, Trash2, Filter } from "lucide-react";
-import { useGetteachersQuery } from "@/redux/features/teacherApi";
+import { Search, Edit, Trash2, Filter } from "lucide-react";
+import {
+    useGetTeacherQuery,
+    useDeleteTeacherMutation
+} from "@/redux/features/teacherApi";
+
+import AddTeacherModal from "./AddTeacherModal";
 import Loader from "@/components/Loader";
+import DeleteConfirmModal from "@/components/DeleteConfirmModal";
+import { toast } from "sonner";
+import FetchError from "@/components/FetchError";
 
-export default function StudentsPage() {
+export default function TeachersPage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const { data: teachers, isLoading, isError } = useGetteachersQuery()
-
-    const statusStyles = {
-        Active: "bg-green-100 text-green-700",
-        "On Leave": "bg-yellow-100 text-yellow-700",
-        Retired: "bg-gray-100 text-gray-600",
-    };
+    const { data: teachers, isLoading, isError, refetch } = useGetTeacherQuery();
+    const [deleteTeacher] = useDeleteTeacherMutation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingTeacher, setEditingTeacher] = useState(null);
 
     if (isLoading) return <Loader />;
-    if (isError) return <FetchError message="⚠️ Error loading teachers!" />;
+    if (isError)
+        return <FetchError refetch={refetch} message="⚠️ Error loading teachers!" />;
+
+    const handleDelete = async (id) => {
+        try {
+            await deleteTeacher(id).unwrap();
+            toast.success("Teacher deleted successfully");
+        } catch (err) {
+            toast.error("Failed to delete teacher");
+        }
+    };
+
+    // Search Filter
+    const filteredTeachers = teachers?.filter((t) =>
+        `${t.firstName} ${t.lastName} ${t.teacherID}`
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+    );
 
     return (
-        <div className="p-6 h-full">
-            {/* Page Title & Add Button */}
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+        <div className="p-4 sm:p-6 h-full">
+
+            {/* Page Title + Add Button */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Teachers</h1>
-                    <p className="text-gray-500">Manage teaching staff and assignments</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+                        Teachers
+                    </h1>
+                    <p className="text-gray-500">Manage teacher records & assignments</p>
                 </div>
-                <button className="mt-3 sm:mt-0 bg-green-800 text-white px-5 py-2 rounded-xl hover:bg-green-700 transition-all">
-                    + Add New Teacher
+
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-green-700 text-white px-4 py-2 rounded-xl hover:bg-green-800 transition-all w-full sm:w-auto"
+                >
+                    + New Teacher
                 </button>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-                {/* Search Input */}
-                <div className="relative flex-1 sm:max-w-sm">
+            {/* Modal */}
+            <AddTeacherModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setEditingTeacher(null);
+                }}
+                teacher={editingTeacher}
+            />
+
+            {/* Search + Filter */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <div className="relative w-full sm:max-w-sm">
                     <Search className="absolute top-3 left-3 text-gray-400 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder="Search students by name or ID..."
-                        className="w-[1030] pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search teacher by name or ID..."
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
 
-                {/* Filter Button / Component */}
-                <button className="flex bg-gray-200 p-2 rounded-sm border-2 border-gray-300">
-                    <Filter /> Filter
+                <button className="flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-300 transition w-full sm:w-auto justify-center">
+                    <Filter className="w-4 h-4" />
+                    Filter
                 </button>
             </div>
 
+            {/* Responsive Table */}
+            <div className="overflow-x-auto bg-white rounded-2xl shadow-md">
+                <table className="min-w-full">
+                    <caption className="text-left text-xl sm:text-2xl font-bold text-gray-600 p-4">
+                        List of all teachers
+                    </caption>
 
-            {/* HTML Table */}
-            <div className="overflow-x-auto bg-white rounded-2xl p-4">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <caption className="text-left text-gray-500 p-4">List of all teachers in the school</caption>
-                    <thead className="bg-gray-100">
+                    <thead className="bg-gray-100 hidden sm:table-header-group">
                         <tr>
-                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Teacher Name</th>
+                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
                             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Teacher ID</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">subject</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Contact</th>
+                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Subject</th>
+                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Experience</th>
+                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
                             <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700">Actions</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
-                        {teachers.length > 0 ? (
-                            teachers.map((teacher) => (
-                                <tr key={teacher.id} className="hover:bg-gray-50 transition">
-                                    <td className="px-6 py-3 font-medium">{teacher.firstName} {teacher.lastName}</td>
-                                    <td className="px-6 py-3">{teacher.teacherID}</td>
-                                    <td className="px-6 py-3">
-                                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyles[teacher.status]}`}>
-                                            {teacher.subject}
-                                        </span>
+
+                    <tbody className="divide-y divide-gray-200 sm:table-row-group">
+                        {filteredTeachers?.length > 0 ? (
+                            filteredTeachers.map((teacher) => (
+                                <tr
+                                    key={teacher._id}
+                                    className="hover:bg-gray-50 transition block sm:table-row p-4 sm:p-0"
+                                >
+                                    {/* Mobile Name */}
+                                    <td className="px-6 py-3 font-medium block sm:table-cell">
+                                        <span className="sm:hidden font-semibold text-gray-500">Name: </span>
+                                        {teacher.firstName} {teacher.lastName}
                                     </td>
-                                    <td className="px-6 py-3">{teacher.experience} years</td>
-                                    <td className="px-6 py-3 text-center flex justify-center gap-2">
-                                        <button className="text-blue-600 hover:text-blue-800">
-                                            <Eye className="w-4 h-4" />
-                                        </button>
-                                        <button className="text-yellow-600 hover:text-yellow-800">
+
+                                    {/* Teacher ID */}
+                                    <td className="px-6 py-3 block sm:table-cell">
+                                        <span className="sm:hidden font-semibold text-gray-500">ID: </span>
+                                        {teacher.teacherID}
+                                    </td>
+
+                                    {/* Subject */}
+                                    <td className="px-6 py-3 block sm:table-cell">
+                                        <span className="sm:hidden font-semibold text-gray-500">Subject: </span>
+                                        {teacher.subject}
+                                    </td>
+
+                                    {/* Experience */}
+                                    <td className="px-6 py-3 block sm:table-cell">
+                                        <span className="sm:hidden font-semibold text-gray-500">Experience: </span>
+                                        {teacher.experience} years
+                                    </td>
+
+                                    {/* Email */}
+                                    <td className="px-6 py-3 block sm:table-cell">
+                                        <span className="sm:hidden font-semibold text-gray-500">Email: </span>
+                                        {teacher.email}
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="px-6 py-3 space-x-3 text-center flex sm:block justify-center gap-3">
+
+                                        {/* EDIT BUTTON */}
+                                        <button
+                                            onClick={() => {
+                                                setEditingTeacher(teacher);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="text-yellow-600 hover:text-yellow-800"
+                                        >
                                             <Edit className="w-4 h-4" />
                                         </button>
-                                        <button className="text-red-600 hover:text-red-800">
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+
+                                        {/* DELETE BUTTON */}
+                                        <DeleteConfirmModal
+                                            onConfirm={() => handleDelete(teacher._id)}
+                                        >
+                                            <button className="text-red-600 hover:text-red-800">
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </DeleteConfirmModal>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={6} className="text-center py-4 text-gray-500">
+                                <td colSpan={6} className="text-center py-6 text-gray-500">
                                     No teachers found.
                                 </td>
                             </tr>

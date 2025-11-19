@@ -5,13 +5,12 @@ export const teacherApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/" }),
     tagTypes: ["Teachers"],
     endpoints: (builder) => ({
-        // GET all teachers
-        getteachers: builder.query({
+        getTeacher: builder.query({
             query: () => "teachers",
             providesTags: ["Teachers"],
         }),
-        // CREATE teachers
-        addteachers: builder.mutation({
+
+        addTeacher: builder.mutation({
             query: (newteachers) => ({
                 url: "teachers",
                 method: "POST",
@@ -19,8 +18,8 @@ export const teacherApi = createApi({
             }),
             invalidatesTags: ["Teachers"],
         }),
-        // UPDATE teachers
-        updateteachers: builder.mutation({
+
+        updateTeacher: builder.mutation({
             query: ({ id, ...data }) => ({
                 url: `teachers/${id}`,
                 method: "PATCH",
@@ -28,8 +27,8 @@ export const teacherApi = createApi({
             }),
             invalidatesTags: ["Teachers"],
         }),
-        // DELETE teachers
-        deleteteachers: builder.mutation({
+
+        deleteTeacher: builder.mutation({
             query: (id) => ({
                 url: `teachers/${id}`,
                 method: "DELETE",
@@ -40,8 +39,8 @@ export const teacherApi = createApi({
 });
 
 export const {
-    useGetteachersQuery,
-    useAddteachersMutation,
-    useUpdateteachersMutation,
-    useDeleteteachersMutation,
+    useGetTeacherQuery,
+    useAddTeacherMutation,
+    useUpdateTeacherMutation,
+    useDeleteTeacherMutation,
 } = teacherApi;

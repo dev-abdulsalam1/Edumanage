@@ -10,6 +10,11 @@ export const studentApi = createApi({
       query: () => "students",
       providesTags: ["students"],
     }),
+    // GET single student
+    getSingleStudent: builder.query({
+      query: (id) => `students/${id}`,
+      providesTags: (result, error, id) => [{ type: "students", id }],
+    }),
     // CREATE Student
     addStudent: builder.mutation({
       query: (newStudent) => ({
@@ -41,6 +46,7 @@ export const studentApi = createApi({
 
 export const {
   useGetStudentQuery,
+  useGetSingleStudentQuery,
   useAddStudentMutation,
   useUpdateStudentMutation,
   useDeleteStudentMutation,

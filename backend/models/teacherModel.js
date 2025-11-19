@@ -14,7 +14,7 @@ const teacherSchema = new mongoose.Schema(
         },
         gender: {
             type: String,
-            enum: ["Male", "Female", "Other"],
+            enum: ["Male", "Female"],
             required: true,
         },
         email: {
@@ -30,7 +30,6 @@ const teacherSchema = new mongoose.Schema(
         teacherID: {
             type: String,
             unique: true,
-            required: true,
         },
         subject: {
             type: String,
@@ -57,6 +56,13 @@ const teacherSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+teacherSchema.pre("save", function (next) {
+    if (!this.teacherID) {
+        this.teacherID = `TECH${Math.floor(1000 + Math.random() * 9000)}`; // e.g., TECH4567
+    }
+    next();
+});
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 

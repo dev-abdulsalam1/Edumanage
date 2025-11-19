@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Edit, Trash2, Filter, AlertTriangle } from "lucide-react";
+import { Search, Edit, Trash2, Filter, AlertTriangle, Eye, Link, View } from "lucide-react";
 import {
     useDeleteStudentMutation,
     useGetStudentQuery,
@@ -152,6 +152,12 @@ export default function StudentsPage() {
                                     </td>
 
                                     <td className="px-6 py-3 space-x-3 text-center flex sm:block justify-center gap-3">
+                                        <button className="text-blue-600 hover:text-blue-800">
+                                            <Link href={`/dashboard/students/${student._id}`}>
+                                                <View className="w-4 h-4" />
+                                            </Link>
+                                        </button>
+
                                         <button
                                             onClick={() => {
                                                 setEditingStudent(student);
