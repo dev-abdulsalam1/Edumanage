@@ -80,21 +80,11 @@ export default function TeacherProfile() {
 
                 {/* Footer Actions */}
                 <div className="p-6 border-t border-green-100 flex justify-end gap-4">
-                    <button
-                        className="px-5 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        Edit
-                    </button>
-                    {/* Modal */}
-                    {/* <EditTeacherModal
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        teacher={data}
-                    /> */}
-                    <button className="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">
-                        Delete
-                    </button>
+                    <Link href='/dashboard/teachers'>
+                        <button className="px-5 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition">
+                            Back
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
