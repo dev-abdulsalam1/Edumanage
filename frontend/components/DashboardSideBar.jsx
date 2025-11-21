@@ -23,14 +23,14 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 
 const managementItems = [
     { title: "Dashboard", url: "/dashboard", icon: Home },
     { title: "Students", url: "/dashboard/students", icon: Users },
     { title: "Teachers", url: "/dashboard/teachers", icon: GraduationCap },
-    { title: "Classes", url: "#", icon: BookOpen },
-    { title: "Attendance", url: "#", icon: ClipboardList },
+    { title: "Classes", url: "/dashboard/classes", icon: BookOpen },
+    { title: "Attendance", url: "/dashboard/attendance", icon: ClipboardList },
     { title: "Exams & Results", url: "#", icon: BarChart3 },
     { title: "Settings", url: "#", icon: Settings },
 ];
