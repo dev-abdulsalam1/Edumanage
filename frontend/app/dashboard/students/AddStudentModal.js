@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useAddStudentMutation, useUpdateStudentMutation } from "@/redux/features/studentApi";
 import { toast } from "sonner";
+import { useGetClassQuery } from "@/redux/features/classesApi";
 
 export default function AddStudentModal({ isOpen, onClose, student }) {
+    const { data: classes } = useGetClassQuery()
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -34,7 +36,7 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
                 firstName: student.firstName || "",
                 lastName: student.lastName || "",
                 gender: student.gender || "Male",
-                grade: student.grade || "",
+                assignedClass: student.assignedClass || "",
                 phone: student.phone || "",
                 parentName: student.parentName || "",
                 parentContact: student.parentContact || "",
@@ -45,7 +47,7 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
                 firstName: "",
                 lastName: "",
                 gender: "Male",
-                grade: "",
+                assignedClass: "",
                 phone: "",
                 parentName: "",
                 parentContact: "",
@@ -121,15 +123,19 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
                                 <option>Female</option>
                             </select>
                         </div>
-
-                        <input
-                            name="grade"
-                            placeholder="Grade (e.g., Grade 9)"
-                            value={formData.grade}
+                        <select
+                            name="assignedClass"
+                            value={formData.assignedClass}
                             onChange={handleChange}
                             className="w-full border p-2 rounded-md"
-                            required
-                        />
+                        >
+                            <option value="">Select Class</option>
+                            {classes?.map((cls) => (
+                                <option key={cls._id} value={cls._id}>
+                                    {cls.className}
+                                </option>
+                            ))}
+                        </select>
 
                         <input
                             name="phone"

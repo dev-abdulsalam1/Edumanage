@@ -4,33 +4,49 @@ const classSchema = new mongoose.Schema(
     {
         className: {
             type: String,
-            required: [true, "Class name is required"], // e.g., "Grade 8A"
+            required: [true, "Class name is required"],
             trim: true,
+            unique: true
         },
+        // if you want to reference a teacher
         teacher: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Teacher", // references the Teacher model
-            required: [true, "Class teacher is required"],
+            ref: "Teacher",
+            default: null,
         },
+        //  reference actual students
         students: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Student", // references the Student model
+                ref: "Student",
             },
         ],
+
         academicYear: {
             type: String,
-            required: true, // e.g., "2024–2025"
-        },
-        gradeLevel: {
-            type: String, // e.g., "Grade 8" or "Form 2"
             required: true,
         },
+
+        gradeLevel: {
+            type: String,
+            required: true,
+        },
+        roomName: {
+            type: String,
+            required: true,
+            unique: true
+        },
+
+        // UI expects schedule string
+        schedule: {
+            type: String,
+            default: "No schedule set",
+        },
     },
-    {
-        timestamps: true, // adds createdAt and updatedAt automatically
-    }
 );
+
+classSchema.index({ className: 1 }, { unique: true });
+classSchema.index({ roomName: 1 }, { unique: true });
 
 const Class = mongoose.model("Class", classSchema);
 

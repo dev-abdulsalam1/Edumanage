@@ -21,9 +21,9 @@ const studentSchema = new mongoose.Schema(
             type: String,
             unique: true,
         },
-        grade: {
-            type: String,
-            required: true,
+        assignedClass: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Class", default: null
         },
         phone: {
             type: String,

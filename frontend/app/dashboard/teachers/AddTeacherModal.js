@@ -150,7 +150,6 @@ export default function AddTeacherModal({ isOpen, onClose, teacher }) {
                                 className="w-full border p-2 rounded-md"
                                 required
                             />
-
                             <input
                                 name="subject"
                                 placeholder="Subject Specialization"
