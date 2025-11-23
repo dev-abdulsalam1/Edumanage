@@ -26,7 +26,6 @@ const classSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-
         gradeLevel: {
             type: String,
             required: true,

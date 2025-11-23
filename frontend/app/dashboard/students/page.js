@@ -17,6 +17,7 @@ export default function StudentsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const { data: students, isLoading, isError, refetch } = useGetStudentQuery();
     const [deleteStudent] = useDeleteStudentMutation();
+    const { data: classes } = useGetStudentQuery();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
 

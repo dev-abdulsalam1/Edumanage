@@ -25,6 +25,10 @@ const studentSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Class", default: null
         },
+        grade: {
+            type: String,
+            required: false, // or true if you want
+        },
         phone: {
             type: String,
         },

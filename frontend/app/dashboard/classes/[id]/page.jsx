@@ -1,9 +1,8 @@
 "use client";
 
 import Loader from "@/components/Loader";
-import { useGetClassQuery, useGetSingleClassQuery } from "@/redux/features/classesApi";
-import { useGetStudentQuery } from "@/redux/features/studentApi";
-import { X, Users, CalendarDays, User } from "lucide-react";
+import { useGetSingleClassQuery } from "@/redux/features/classesApi";
+import { X, Users, User, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -11,29 +10,18 @@ export default function ClassProfile() {
     const params = useParams();
     const id = params.id;
 
-    const { data: cls, isLoading } = useGetSingleClassQuery(id);
-    const { data: classes } = useGetClassQuery();
-    const { data: students } = useGetStudentQuery();
-
+    const { data, isLoading } = useGetSingleClassQuery(id);
 
     if (isLoading) return <Loader />;
-    if (!cls) return <p className="p-6 text-red-600">Class not found</p>;
-
-    const studentCount = students?.filter((s) => s.assignedClass === cls._id).length || 0;
+    if (!data) return <p className="p-6 text-red-600">Class not found</p>;
 
     const details = [
-        { label: "Class Name", value: cls.className },
-        { label: "Grade Level", value: cls.gradeLevel },
-        { label: "Academic Year", value: cls.academicYear },
-        { label: "Room", value: cls.roomName },
-        { label: "Schedule", value: cls.schedule || "-" },
-        {
-            label: "Assigned Teacher",
-            value: cls.teacher
-                ? `${cls.teacher.firstName} ${cls.teacher.lastName}`
-                : "Not Assigned",
-        },
-        { label: "Total Students", value: ` ${studentCount} Students ` },
+        { label: "Class Name", value: data.className },
+        { label: "Grade Level", value: data.gradeLevel },
+        { label: "Academic Year", value: data.academicYear },
+        { label: "Room Name", value: data.roomName },
+        { label: "Schedule", value: data.schedule || "Not assigned" },
+        { label: "Teacher", value: data.teacher ? `${data.teacher.firstName} ${data.teacher.lastName}` : "No teacher assigned" },
     ];
 
     return (
@@ -46,22 +34,21 @@ export default function ClassProfile() {
                 </Link>
             </div>
 
-            {/* Card */}
+            {/* Profile Card */}
             <div className="bg-white shadow-lg rounded-2xl border border-green-200 overflow-hidden">
-
-                {/* Top Banner */}
+                {/* Top Header */}
                 <div className="bg-green-50 p-6 flex items-center gap-6 border-b border-green-100">
                     <div className="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center text-3xl font-bold text-white">
-                        {cls.className[0]}
+                        {data.className[0]}
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-semibold text-black">{cls.className}</h2>
-                        <p className="text-black">Room: {cls.roomName}</p>
+                        <h2 className="text-2xl font-semibold text-black">{data.className}</h2>
+                        <p className="text-black">Grade Level: {data.gradeLevel}</p>
                     </div>
 
-                    <span className="ml-auto flex items-center gap-2 px-4 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
-                        <Users size={18} /> {studentCount} Students
+                    <span className="ml-auto px-4 py-1 rounded-full bg-green-100 text-green-800 font-medium">
+                        {data.academicYear}
                     </span>
                 </div>
 
@@ -81,9 +68,39 @@ export default function ClassProfile() {
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className="p-6 border-t border-green-100 flex justify-end">
-                    <Link href="/dashboard/classes">
+                {/* Students Section */}
+                <div className="border-t border-green-100 p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <Users className="text-green-700" /> Students in this Class
+                    </h3>
+
+                    {data.students && data.students.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {data.students.map((stu) => (
+                                <Link
+                                    key={stu._id}
+                                    href={`/dashboard/students/${stu._id}`}
+                                    className="p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition flex items-center gap-3"
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
+                                        {stu.firstName[0]}
+                                        {stu.lastName[0]}
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold">{stu.firstName} {stu.lastName}</p>
+                                        <p className="text-sm text-gray-600">{stu.studentID}</p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">No students assigned to this class.</p>
+                    )}
+                </div>
+
+                {/* Footer Actions */}
+                <div className="p-6 border-t border-green-100 flex justify-end gap-4">
+                    <Link href='/dashboard/classes'>
                         <button className="px-5 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition">
                             Back
                         </button>
