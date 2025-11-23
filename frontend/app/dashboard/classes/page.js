@@ -6,11 +6,14 @@ import { useDeleteClassMutation, useGetClassQuery } from "@/redux/features/class
 import AddClassModal from "./AddClassModal"; // adjust path
 import { useGetStudentQuery } from "@/redux/features/studentApi";
 import { toast } from "sonner";
+import Link from "next/link";
+import Loader from "@/components/Loader";
+import FetchError from "@/components/FetchError";
 
 export default function ClassesPage() {
     const { data: students } = useGetStudentQuery();
     const { data: classes, isError, isLoading, refetch } = useGetClassQuery();
-    const [ deleteClass ] = useDeleteClassMutation()
+    const [deleteClass] = useDeleteClassMutation()
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingClass, setEditingClass] = useState(null);
@@ -38,8 +41,9 @@ export default function ClassesPage() {
         setIsModalOpen(false);
     };
 
-    if (isLoading) return <p>Loading classes...</p>;
-    if (isError) return <p>Error loading classes!</p>;
+    if (isLoading) return <Loader />;
+    if (isError)
+        return <FetchError refetch={refetch} message="⚠️ Error loading Classes!" />;
 
     return (
         <div className="p-6">
@@ -101,10 +105,11 @@ export default function ClassesPage() {
 
                         {/* Buttons */}
                         <div className="flex justify-between mt-6">
-                            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
-                                View
-                            </button>
-
+                            <Link href={`/dashboard/classes/${cls._id}`}>
+                                <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                                    View
+                                </button>
+                            </Link>
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => handleOpenModal(cls)}
