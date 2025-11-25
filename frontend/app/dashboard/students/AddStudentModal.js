@@ -36,7 +36,7 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
                 firstName: student.firstName || "",
                 lastName: student.lastName || "",
                 gender: student.gender || "Male",
-                assignedClass: student.assignedClass || "",
+                grade: student.grade?._id || "",
                 phone: student.phone || "",
                 parentName: student.parentName || "",
                 parentContact: student.parentContact || "",
@@ -47,7 +47,7 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
                 firstName: "",
                 lastName: "",
                 gender: "Male",
-                assignedClass: "",
+                grade: "",
                 phone: "",
                 parentName: "",
                 parentContact: "",
@@ -124,8 +124,8 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
                             </select>
                         </div>
                         <select
-                            name="assignedClass"
-                            value={formData.assignedClass}
+                            name="grade"
+                            value={formData.grade}
                             onChange={handleChange}
                             className="w-full border p-2 rounded-md"
                         >
@@ -163,7 +163,7 @@ export default function AddStudentModal({ isOpen, onClose, student }) {
 
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isLoading || isUpdating}
                             className="w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition-all disabled:opacity-60"
                         >
                             {student

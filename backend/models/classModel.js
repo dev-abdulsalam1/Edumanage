@@ -8,13 +8,11 @@ const classSchema = new mongoose.Schema(
             trim: true,
             unique: true
         },
-        // if you want to reference a teacher
         teacher: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Teacher",
             default: null,
         },
-        //  reference actual students
         students: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -36,16 +34,12 @@ const classSchema = new mongoose.Schema(
             unique: true
         },
 
-        // UI expects schedule string
         schedule: {
             type: String,
             default: "No schedule set",
         },
-    },
+    }
 );
-
-classSchema.index({ className: 1 }, { unique: true });
-classSchema.index({ roomName: 1 }, { unique: true });
 
 const Class = mongoose.model("Class", classSchema);
 

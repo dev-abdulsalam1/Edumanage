@@ -21,13 +21,10 @@ const studentSchema = new mongoose.Schema(
             type: String,
             unique: true,
         },
-        assignedClass: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Class", default: null
-        },
         grade: {
-            type: String,
-            required: false, // or true if you want
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Class",
+            default: null
         },
         phone: {
             type: String,

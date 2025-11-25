@@ -17,7 +17,6 @@ export default function StudentsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const { data: students, isLoading, isError, refetch } = useGetStudentQuery();
     const [deleteStudent] = useDeleteStudentMutation();
-    const { data: classes } = useGetStudentQuery();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
 
@@ -161,7 +160,7 @@ export default function StudentsPage() {
                                         <span className="sm:hidden font-semibold text-gray-500">
                                             Grade:{" "}
                                         </span>
-                                        {student.grade}
+                                        {student.grade?.className}
                                     </td>
 
                                     <td className="px-6 py-3 block sm:table-cell">
