@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 
 export default function Services() {
     return (
-        <>
+        <section id="services">
             <Navbar />
             <section className="py-20 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-6 text-center">
@@ -72,6 +72,6 @@ export default function Services() {
                     </div>
                 </div>
             </section>
-        </>
+        </section>
     );
 }

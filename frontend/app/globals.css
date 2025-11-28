@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html {
+  scroll-behavior: smooth;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -39,7 +42,7 @@
 
 @layer base {
   * {
-    @apply  border-gray-200 outline-none;
+    @apply border-gray-200 outline-none;
   }
 
   body {

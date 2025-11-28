@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 
 export default function About() {
     return (
-        <>
+        <section id="about">
             <Navbar />
             <section className="py-20 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-12">
@@ -46,6 +46,6 @@ export default function About() {
                     </div>
                 </div>
             </section>
-        </>
+        </section>
     );
 }

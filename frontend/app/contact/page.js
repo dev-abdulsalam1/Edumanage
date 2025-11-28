@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 
 export default function Contact() {
     return (
-        <>
+        <section id="contact">
             <Navbar />
 
             <section className="py-20 bg-gray-50">
@@ -78,6 +78,6 @@ export default function Contact() {
                     </div>
                 </div>
             </section>
-        </>
+        </section>
     );
 }

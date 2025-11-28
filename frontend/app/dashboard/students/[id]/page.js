@@ -11,7 +11,7 @@ export default function StudentProfile() {
     const id = params.id;
 
     const { data, isLoading } = useGetSingleStudentQuery(id);
-
+    console.log("STUDENT DATA:", data);
     if (isLoading) return <Loader />;
     if (!data) return <p className="p-6 text-red-600">Student not found</p>;
 
@@ -52,7 +52,7 @@ export default function StudentProfile() {
                         <h2 className="text-2xl font-semibold text-black">
                             {data.firstName} {data.lastName}
                         </h2>
-                        <p className="text-black">Grade: {data.grade}</p>
+                        <p className="text-black">Grade: {data.grade?.className}</p>
                     </div>
                     <span
                         className={`ml-auto px-4 py-1 rounded-full text-sm font-medium ${statusStyles[data.status] || "bg-green-100 text-black"
@@ -72,7 +72,8 @@ export default function StudentProfile() {
                                     } border-b border-green-100 hover:bg-green-100 transition`}
                             >
                                 <span className="font-semibold text-green-800">{item.label}</span>
-                                <span className="text-black">{item.value}</span>
+                                <span className="text-black">{typeof item.value === "object" ? JSON.stringify(item.value) : item.value}</span>
+
                             </div>
                         ))}
                     </div>

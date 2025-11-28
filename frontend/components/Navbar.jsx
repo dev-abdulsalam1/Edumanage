@@ -16,13 +16,13 @@ export default function Navbar() {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex justify-end space-x-8 font-medium text-gray-700 md:items-center">
-                    <Link href="/about" className="hover:text-green-200 transition">
+                    <Link href="#about" scroll={true} className="hover:text-green-200 transition">
                         About
                     </Link>
-                    <Link href="/services" className="hover:text-green-200 transition">
+                    <Link href="#services" scroll={true} className="hover:text-green-200 transition">
                         Services
                     </Link>
-                    <Link href="/contact" className="hover:text-green-200 transition">
+                    <Link href="#contact" className="hover:text-green-200 transition">
                         Contact
                     </Link>
                     <Link

@@ -30,8 +30,8 @@ const managementItems = [
     { title: "Students", url: "/dashboard/students", icon: Users },
     { title: "Teachers", url: "/dashboard/teachers", icon: GraduationCap },
     { title: "Classes", url: "/dashboard/classes", icon: BookOpen },
-    { title: "Attendance", url: "/dashboard/attendance", icon: ClipboardList },
-    { title: "Exams & Results", url: "#", icon: BarChart3 },
+    // { title: "Attendance", url: "/dashboard/attendance", icon: ClipboardList },
+    // { title: "Exams & Results", url: "#", icon: BarChart3 },
     { title: "Settings", url: "#", icon: Settings },
 ];
 
